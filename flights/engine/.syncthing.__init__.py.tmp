@@ -1,0 +1,5 @@
+__all__ = [
+    "FlightExplorer"
+]
+
+from .main import FlightExplorer
