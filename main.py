@@ -18,7 +18,7 @@ async def amain():
         }
     )
     async for obj in results:
-        print("obj", obj)
+        print(obj)
     await explorer.close()
 
 def main():
