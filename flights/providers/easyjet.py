@@ -79,8 +79,8 @@ class EasyJet(BaseProvider):
         )
         
         if result["ok"] and result["json"]:
-            return self._format_results(result["json"])
-        return None
+            for r in self._format_results(result["json"]):
+                yield r
     
     async def close(self):
         await self.browser.close()

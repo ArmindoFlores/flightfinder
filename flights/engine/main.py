@@ -33,17 +33,29 @@ class FlightFinder:
         )
 
     async def search(self, params: SearchParams) -> typing.AsyncGenerator[SearchResults, None]:
-        coros = [provider.search(params) for provider in self.initialized_providers]
-        for fut in asyncio.as_completed(coros):
-            try:
-                items = await fut
-                if items is None:
+        async with asyncio.TaskGroup() as tg:
+            q = asyncio.Queue()
+
+            for provider in self.initialized_providers:
+                async def consume(provider=provider, q=q):
+                    try:
+                        async for x in provider.search(params):
+                            if self._filter(x, params):
+                                await q.put(x)
+                    except Exception:
+                        traceback.print_exc()
+                    finally:
+                        await q.put(None)
+
+                tg.create_task(consume())
+
+            done = 0
+            while done < len(self.initialized_providers):
+                item = await q.get()
+                if item is None:
+                    done += 1
                     continue
-                for x in items:
-                    if self._filter(x, params):
-                        yield x
-            except Exception:
-                traceback.print_exc()
+                yield item
 
     async def close(self):
         await asyncio.gather(

@@ -10,7 +10,7 @@ class BaseProvider:
     async def init(self, playwright: Playwright, requests: AsyncSession) -> None:
         raise NotImplementedError
 
-    async def search(self, params: search.SearchParams) -> typing.List[search.SearchResults] | None:
+    async def search(self, params: search.SearchParams) -> typing.AsyncGenerator[search.SearchResults, None]:
         raise NotImplementedError
 
     async def close(self) -> None:
