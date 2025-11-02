@@ -13,3 +13,8 @@ class SearchParams(TypedDict):
     @staticmethod
     def _value_to_string(value):
         return str(value)
+
+class SearchResults(TypedDict):
+    price: float
+    datetime: datetime.datetime
+    provider: str

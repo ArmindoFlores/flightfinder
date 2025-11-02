@@ -5,9 +5,9 @@ import flights
 
 
 async def amain():
-    explorer = flights.FlightExplorer()
+    explorer = flights.FlightFinder()
     await explorer.init()
-    results = await explorer.find_flights(
+    results = explorer.search(
         {
             "currency": "EUR",
             "destination": "GVA",
@@ -17,8 +17,8 @@ async def amain():
             "end_date": datetime.date(2026, 2, 5),
         }
     )
-    for obj in results:
-        print(obj)
+    async for obj in results:
+        print("obj", obj)
     await explorer.close()
 
 def main():
